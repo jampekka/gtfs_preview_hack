@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<style type="text/css">
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#map-container-container {
+	position: absolute;
+	top: 32px; bottom: 0; left: 0; right: 0;
+}
+
+#map-container {
+	width: 100%;
+	height: 100%;
+}
+
+</style>
+<script type="text/javascript" src="vendor/coffee-script.js"></script>
+<script type="text/javascript" src="vendor/jquery-1.11.0.js"></script>
+</head>
+<body>
+
+<div>
+<select id="shape-selector">
+</select>
+</div>
+<div id="map-container-container">
+<iframe id="map-container" src="http://geojson.io/"></iframe>
+</div>
+<script type="text/coffeescript">
+urlparts =  window.location.href.split('/')
+urlparts[urlparts.length-1] = ''
+basepath = urlparts.join '/'
+DATAPATH = basepath + "data/"
+indexfile = DATAPATH + "index.json"
+$dd = $ "#shape-selector"
+$.getJSON(indexfile).done (index) ->
+	for shape in index
+		$dd.append("""
+		<option value="#{shape.file}">#{shape.id}, #{shape.outliers}, #{shape.likelihood}</option>
+		""")
+	$dd.trigger('change')
+
+$dd.change ->
+	url = DATAPATH + $dd.val()
+	$("#map-container").prop 'src', "http://geojson.io/?_=#{Math.random()}#data=data:text/x-url,#{url}"
+
+</script>
+
+</body>
+</html>
